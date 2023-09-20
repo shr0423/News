@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="News">
+	<insert id="insert" parameterType="News">
+		insert into news(news_idx, title, writer, content)
+		values(seq_news.nextval, #{title},#{writer},#{content})
+	</insert>
+	
+	<resultMap type="News" id="newsMap">
+		<id column="news_idx" property="news_idx"/>
+		<result column="title" property="title"/>
+		<result column="writer" property="writer"/>
+		<result column="regdate" property="regdate"/>
+		<result column="hit" property="hit"/>
+		<result column="content" property="content"/>
+		<collection column="news_idx" javaType="java.util.List"
+		 ofType="Comments" property="commentsList" select="Comments.selectByNewsIdx"></collection>
+	</resultMap>
+	
+	<select id="selectAll" resultMap="newsMap">
+		select * from news order by news_idx desc
+	</select>
+	
+	<select id="select" parameterType="int" resultType="News">
+		select * from news where news_idx=#{news_idx}
+	</select>
+	
+	<update id="update" parameterType="News">
+		update news set title=#{title}, writer=#{writer}, content=#{content}
+		where news_idx=#{news_idx}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete news where news_idx=#{news_idx}
+	</delete>
+	
+</mapper>
